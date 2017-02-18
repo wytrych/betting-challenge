@@ -1,4 +1,4 @@
-import { calculate, parseBet, parseBetsList, parseResult } from './calculator-dispatcher'
+import { calculateDividends, parseBet, parseBetsList, parseResult } from './calculator-dispatcher'
 import { Win, Place, Quinella, Exact } from './calculators'
 
 jest.mock('./calculators', () => ({
@@ -12,7 +12,7 @@ describe('calculator dispatcher', () => {
     
     it('should error if type is not valid', () => {
         expect(() => {
-            calculate('D')
+            calculateDividends('D')
         }).toThrow('Type "D" is invalid')
     })
 
@@ -26,20 +26,20 @@ describe('calculator dispatcher', () => {
         const result = []
 
         expect(Win).not.toHaveBeenCalled()
-        calculate('W', bets, result)
-        expect(Win).toHaveBeenCalledWith(bets.W, result)
+        calculateDividends('W', bets, result)
+        expect(Win).toHaveBeenCalledWith(bets.W, result, 0.1)
 
         expect(Place).not.toHaveBeenCalled()
-        calculate('P', bets, result)
-        expect(Place).toHaveBeenCalledWith(bets.P, result)
+        calculateDividends('P', bets, result)
+        expect(Place).toHaveBeenCalledWith(bets.P, result, 0.1)
 
         expect(Quinella).not.toHaveBeenCalled()
-        calculate('Q', bets, result)
-        expect(Quinella).toHaveBeenCalledWith(bets.Q, result)
+        calculateDividends('Q', bets, result)
+        expect(Quinella).toHaveBeenCalledWith(bets.Q, result, 0.1)
 
         expect(Exact).not.toHaveBeenCalled()
-        calculate('E', bets, result)
-        expect(Exact).toHaveBeenCalledWith(bets.E, result)
+        calculateDividends('E', bets, result)
+        expect(Exact).toHaveBeenCalledWith(bets.E, result, 0.1)
     })
 
 })
@@ -88,7 +88,36 @@ describe('parseBet', () => {
             parseBet('foo')
         }).toThrow('Malformed bet: foo')
         
+        expect(() => {
+            parseBet('XX W:1:2')
+        }).toThrow('Malformed bet: XX W:1:2')
+        
+        expect(() => {
+            parseBet('W:1:2 XX')
+        }).toThrow('Malformed bet: W:1:2 XX')
+        
+        expect(() => {
+            parseBet('XX Q:1,2:2')
+        }).toThrow('Malformed bet: XX Q:1,2:2')
+        
+        expect(() => {
+            parseBet('Q:1,2:2 XX')
+        }).toThrow('Malformed bet: Q:1,2:2 XX')
+        
     })
+
+    it('should error when Quinella or Exact have the same numbers', () => {
+        
+        expect(() => {
+            parseBet('Q:1,1:2')
+        }).toThrow('Horse numbers must be different: Q:1,1:2')
+        
+        expect(() => {
+            parseBet('E:1,1:2')
+        }).toThrow('Horse numbers must be different: E:1,1:2')
+        
+    })
+    
     
 })
 
@@ -129,6 +158,37 @@ describe('parseBetsList', () => {
         }).toThrow(errorMessage)
         
     })
+
+    it('should ignore empty entries', () => {
+        const bets = [
+            'W:1:4',
+            '',
+            'P:2:3',
+        ]
+
+        const expectedResult = {
+            W: [{horses: [1], amount: 4}],
+            P: [{horses: [2], amount: 3}],
+            Q: [],
+            E: [],
+        }
+
+        expect(parseBetsList(bets)).toEqual(expectedResult)
+    })
+    
+    it('should return lineNumbers property on the Error object', () => {
+        const bets = [
+            'W:1:4',
+            'foo',
+            'bar',
+        ]
+
+        try {
+            parseBetsList(bets)
+        } catch (e) {
+            expect(e.erroredLines).toEqual([1, 2])
+        }
+    })
     
 })
 
@@ -154,6 +214,16 @@ describe('parseResult', () => {
         
     })
     
+    it('should error when the horse numbers are not different', () => {
+
+        expect(() => {
+            parseResult('R:1:1:1')
+        }).toThrow('Horse numbers must be different')
+        
+        expect(() => {
+            parseResult('R:1:2:1')
+        }).toThrow('Horse numbers must be different')
+        
+    })
     
 })
-

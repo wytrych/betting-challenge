@@ -1,20 +1,20 @@
-import { Win, Place, Exact, Quinella, calculate } from './calculators'
+import { Win, Place, Exact, Quinella, calculate, EMPTY_MESSAGE } from './calculators'
 
 describe('calculators', () => {
 
     describe('Win', () => {
 
         it('should work fine with no arguments', () => {
-            expect(Win()).toBe('0.00')
+            expect(Win()).toEqual([EMPTY_MESSAGE])
         })
 
         it('should work fine on an empty list of bets', () => {
-            expect(Win([])).toBe('0.00')
+            expect(Win([])).toEqual([EMPTY_MESSAGE])
         })
 
         it('should work fine with an empty result', () => {
-            expect(Win([{amount: 1, horses: [1]}], null)).toBe('0.00')
-            expect(Win([{amount: 1, horses: [1]}], [])).toBe('0.00')
+            expect(Win([{amount: 1, horses: [1]}], null)).toEqual([EMPTY_MESSAGE])
+            expect(Win([{amount: 1, horses: [1]}], [])).toEqual([EMPTY_MESSAGE])
         })
         
 
@@ -36,7 +36,7 @@ describe('calculators', () => {
 
             const result = [1]
 
-            expect(Win(bets, result)).toBe('0.85')
+            expect(Win(bets, result)).toEqual(['0.85'])
         })
 
         it('should allow to pass a different comission rate', () => {
@@ -58,7 +58,7 @@ describe('calculators', () => {
             const result = [1]
             const comission = 0.10
 
-            expect(Win(bets, result, comission)).toBe('0.90')
+            expect(Win(bets, result, comission)).toEqual(['0.90'])
         })
 
         it('should only count winning bets', () => {
@@ -79,7 +79,7 @@ describe('calculators', () => {
 
             const result = [2]
 
-            expect(Win(bets, result)).toBe('2.00')
+            expect(Win(bets, result)).toEqual(['2.00'])
         })
 
         it('should count properly more than one winner', () => {
@@ -108,7 +108,7 @@ describe('calculators', () => {
 
             const result = [3]
 
-            expect(Win(bets, result)).toBe('4.00')
+            expect(Win(bets, result)).toEqual(['4.00'])
         })
 
         it('should calculate the example correctly', () => {
@@ -165,14 +165,14 @@ describe('calculators', () => {
 
             const results = [2, 3, 1]
 
-            expect(Win(bets, results)).toBe('2.60')
+            expect(Win(bets, results)).toEqual(['2.60'])
         })
     })
 
     describe('Place', () => {
 
         it('should work fine on an empty list of bets', () => {
-            expect(Place([])).toEqual(['0.00', '0.00', '0.00'])
+            expect(Place([])).toEqual([EMPTY_MESSAGE, EMPTY_MESSAGE, EMPTY_MESSAGE])
         })
 
         it('should work fine with one voter', () => {
@@ -185,7 +185,7 @@ describe('calculators', () => {
 
             const results = [1, 2, 3]
 
-            expect(Place(bets, results)).toEqual(['0.29', 'Infinity', 'Infinity'])
+            expect(Place(bets, results)).toEqual(['0.29', 'No winning bets', 'No winning bets'])
         })
 
         it('should work fine with two voters', () => {
@@ -202,7 +202,7 @@ describe('calculators', () => {
 
             const results = [1, 2, 3]
 
-            expect(Place(bets, results)).toEqual(['0.59', '0.59', 'Infinity'])
+            expect(Place(bets, results)).toEqual(['0.59', '0.59', 'No winning bets'])
         })
 
         it('should work fine with three voter, one that lost', () => {
@@ -223,7 +223,7 @@ describe('calculators', () => {
 
             const results = [1, 2, 4, 3]
 
-            expect(Place(bets, results)).toEqual(['0.88', '0.88', 'Infinity'])
+            expect(Place(bets, results)).toEqual(['0.88', '0.88', 'No winning bets'])
         })
 
         it('should calculate the example correctly', () => {
@@ -289,7 +289,7 @@ describe('calculators', () => {
     describe('Exact', () => {
 
         it('should work on an empty list', () => {
-            expect(Exact([])).toEqual('0.00')
+            expect(Exact([])).toEqual([EMPTY_MESSAGE])
         })
 
         it('should work with one voter', () => {
@@ -302,7 +302,7 @@ describe('calculators', () => {
 
             const results = [1, 2]
 
-            expect(Exact(bets, results)).toBe('0.82')
+            expect(Exact(bets, results)).toEqual(['0.82'])
         })
 
         it('should calculate the example correctly', () => {
@@ -359,7 +359,7 @@ describe('calculators', () => {
 
             const result = [2, 3, 1]
 
-            expect(Exact(bets, result)).toBe('2.43')
+            expect(Exact(bets, result)).toEqual(['2.43'])
         })
     })
 
@@ -419,7 +419,7 @@ describe('calculators', () => {
 
             const results = [2, 3, 1]
 
-            expect(Quinella(bets, results)).toBe('2.18')
+            expect(Quinella(bets, results)).toEqual(['2.18'])
         })
     })
 

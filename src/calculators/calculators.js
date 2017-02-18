@@ -1,58 +1,68 @@
-export function calculate () {
-    Win([])
+export const EMPTY_MESSAGE = 'No winning bets'
+export const DEFAULT_COMISSIONS = {
+    Q: 0.18,
+    E: 0.18,
+    W: 0.15,
+    P: 0.12,
 }
 
-export function Quinella (bets, result, comission = 0.18) {
-    const numOfPlaces = 1
-
-    function mapFunction () {
-        return calculateBetsGrossPool(bets, (bet) => {
-            const winningPair = result.slice(0, 2)
-            return winningPair.includes(bet.horses[0]) && winningPair.includes(bet.horses[1])
-        }) 
+export function Quinella (bets, result, comission = DEFAULT_COMISSIONS.Q) {
+    function winningCondition (bet) {
+        const winningPair = result.slice(0, 2)
+        return winningPair.includes(bet.horses[0]) && winningPair.includes(bet.horses[1])
     }
 
-    return dividendsPerPlace(numOfPlaces, comission, bets, result, mapFunction)[0]
+    return Order(bets, result, comission, winningCondition)
 }
 
-export function Exact (bets, result, comission = 0.18) {
-    const numOfPlaces = 1
-
-    function mapFunction () {
-        return calculateBetsGrossPool(bets, (bet) => bet.horses[0] === result[0] && bet.horses[1] === result[1]) 
+export function Exact (bets, result, comission = DEFAULT_COMISSIONS.E) {
+    function winningCondition (bet) {
+        return bet.horses[0] === result[0] && bet.horses[1] === result[1]
     }
 
-    return dividendsPerPlace(numOfPlaces, comission, bets, result, mapFunction)[0]
+    return Order(bets, result, comission, winningCondition)
 }
 
-export function Win (bets, result, comission = 0.15) {
+export function Win (bets, result, comission = DEFAULT_COMISSIONS.W) {
     const numOfPlaces = 1
-
-    function mapFunction (horse) {
-        return calculateBetsGrossPool(bets, (bet) => bet.horses[0] === horse)
-    }
-
-    return dividendsPerPlace(numOfPlaces, comission, bets, result, mapFunction)[0]
+    return Places(numOfPlaces, bets, result, comission)
 }
 
-export function Place (bets, result, comission = 0.12) {
+export function Place (bets, result, comission = DEFAULT_COMISSIONS.P) {
     const numOfPlaces = 3
+    return Places(numOfPlaces, bets, result, comission)
+}
 
-    function mapFunction (horse) {
-        return calculateBetsGrossPool(bets, (bet) => bet.horses[0] === horse)
+function Order (bets, result, comission, winningCondition) {
+    const numOfPlaces = 1
+
+    function winningPoolCalculation () {
+        return calculateWinningPool(bets, winningCondition)
     }
 
-    return dividendsPerPlace(numOfPlaces, comission, bets, result, mapFunction)
+    return dividendsPerPlace(numOfPlaces, comission, bets, result, winningPoolCalculation)
 }
 
-function calculateBetsGrossPool (bets, filterFunction) {
-    const betsForThisHorse = bets.filter(filterFunction)
-    return betsForThisHorse.reduce(sumBets, 0)
+function Places (numOfPlaces, bets, result, comission) {
+    function winningPoolCalculation (place) {
+        function winningCondition (bet) {
+            return bet.horses[0] === place
+        }
+
+        return calculateWinningPool(bets, winningCondition)
+    }
+
+    return dividendsPerPlace(numOfPlaces, comission, bets, result, winningPoolCalculation)
 }
 
-function dividendsPerPlace (numOfPlaces, comission, bets, result, mapFunction) {
+function calculateWinningPool (bets, winningCondition) {
+    const winningBets = bets.filter(winningCondition)
+    return winningBets.reduce(sumBets, 0)
+}
+
+function dividendsPerPlace (numOfPlaces, comission, bets, result, winningPoolCalculation) {
     if (!bets || !bets.length || !result || !result.length)
-        return ['0.00', '0.00', '0.00']
+        return [EMPTY_MESSAGE, EMPTY_MESSAGE, EMPTY_MESSAGE].slice(0, numOfPlaces)
 
     const netBets = bets.map((bet) => ({
         ...bet,
@@ -60,15 +70,20 @@ function dividendsPerPlace (numOfPlaces, comission, bets, result, mapFunction) {
     }))
     const netPool = netBets.reduce(sumBets, 0)
     const netPoolPerPlace = netPool / numOfPlaces
-    const grossPools = result.slice(0, numOfPlaces).map(mapFunction)
+    const winningPoolPerPlace = result.slice(0, numOfPlaces).map(winningPoolCalculation)
 
-    return grossPools.map((grossPool) => calculateDividend(netPoolPerPlace, grossPool))
+    return winningPoolPerPlace.map((winningPool) => calculateDividend(netPoolPerPlace, winningPool))
+}
+
+function calculateDividend (netPool, winningPool) {
+    const dividend = (netPool / winningPool).toFixed(2)
+    if (isFinite(dividend))
+        return dividend
+
+    return EMPTY_MESSAGE
 }
 
 function sumBets (sum, bet) {
     return sum += bet.amount
 }
 
-function calculateDividend (netPool, grossPool) {
-    return (netPool / grossPool).toFixed(2)
-}

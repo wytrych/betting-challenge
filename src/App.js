@@ -1,9 +1,39 @@
 import React, { Component } from 'react'
 import './App.css'
-import { parseBetsList, parseResult, calculate } from './calculators/calculator-dispatcher'
+import { parseBetsList, parseResult, calculateDividends } from './calculators/calculator-dispatcher'
+import { DEFAULT_COMISSIONS } from './calculators/calculators'
+import { markErroredLines, stripErrorMarks } from './utils/utils'
 
-function Calculator (props) {
-    return <span>{calculate(props.type, props.bets, props.result)}</span>
+class Calculator extends Component {
+    constructor (props) {
+        super(props)
+        this.state = {
+            comission: DEFAULT_COMISSIONS[props.type] * 100,
+        }
+    }
+
+    updateComission (e) {
+        this.setState({
+            comission: Math.min(Math.max(e.target.value, 0), 100),
+        })
+    }
+
+    currencySign (dividend) {
+        return isFinite(parseFloat(dividend)) ? '$ ' : ''
+    }
+
+    render () {
+        const dividends = calculateDividends(this.props.type, this.props.bets, this.props.result, this.state.comission / 100)
+        return (
+            <div className='dividend'>
+                {dividends.map((dividend, i) => (
+                    <div key={i}>{this.currencySign(dividend)}{dividend}</div>
+                ))}
+                <input value={this.state.comission} onChange={this.updateComission.bind(this)} type='range' min='0' max='100' />
+                <input value={this.state.comission} onChange={this.updateComission.bind(this)} type='number' min='0' max='100' />
+            </div>
+        )
+    }
 }
 
 class App extends Component {
@@ -21,6 +51,8 @@ class App extends Component {
                 E: [],
             },
             rawResult: '',
+            resultError: '',
+            resultSuccess: '',
         }
     }
 
@@ -36,17 +68,20 @@ class App extends Component {
           let error = ''
           let success = ''
           let bets = prevState.bets
+          let input = stripErrorMarks(prevState.input)
           try {
-              bets = parseBetsList(prevState.input.split('\n'))
+              bets = parseBetsList(input.split('\n'))
               success = 'Success!'
           } catch (e) {
               error = e.message
+              input = markErroredLines(input, e.erroredLines)
           }
 
           return {
               error,
               success,
               bets,
+              input,
           }
       })
   }
@@ -60,9 +95,27 @@ class App extends Component {
 
   addResult (e) {
       e.preventDefault()
-      const result = parseResult(this.state.rawResult)
+      let error = ''
+
+      try {
+          const result = parseResult(this.state.rawResult)
+          this.setState({
+              result,
+              resultError: error,
+              resultSuccess: 'Success',
+          })
+      } catch (e) {
+          error = e.message
+          this.setState({
+              resultError: error,
+              resultSuccess: '',
+          })
+      }
+  }
+
+  clearBets () {
       this.setState({
-          result
+          rawResult: '',
       })
   }
 
@@ -76,14 +129,23 @@ class App extends Component {
             <form onSubmit={this.parseForm.bind(this)}>
                 <textarea value={this.state.input} onChange={this.update.bind(this)}></textarea>
                 <button>Add bets</button>
+                <button type='button' onClick={this.clearBets.bind(this)}>Clear bets</button>
             </form>
 
+            {this.state.error}
+            {this.state.success}
             <form onSubmit={this.addResult.bind(this)}>
                 <input type='text' value={this.state.rawResult} onChange={this.updateResult.bind(this)} />
                 <button>Update result</button>
             </form>
-            {this.state.error}
-            {this.state.success}
+            {this.state.resultError}
+            {this.state.resultSuccess}
+
+            <div>
+                <p>Write the bets in the text area separating with new lines. Errors will be highlighted with a "[***]" mark.</p>
+                <p>Write the test results in the separate text input. Errors will be shown underneath.</p>
+                <p>Drag the sliders or type in the boxes to change the comission rate for each product.</p>
+            </div>
         </div>
     )
   }
