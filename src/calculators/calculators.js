@@ -1,6 +1,9 @@
-export function Quinella (bets, result) {
+export function calculate () {
+    Win([])
+}
+
+export function Quinella (bets, result, comission = 0.18) {
     const numOfPlaces = 1
-    const comission = 0.18
 
     function mapFunction () {
         return calculateBetsGrossPool(bets, (bet) => {
@@ -10,39 +13,33 @@ export function Quinella (bets, result) {
     }
 
     return dividendsPerPlace(numOfPlaces, comission, bets, result, mapFunction)[0]
-
 }
 
-export function Exact (bets, result) {
+export function Exact (bets, result, comission = 0.18) {
     const numOfPlaces = 1
-    const comission = 0.18
 
     function mapFunction () {
         return calculateBetsGrossPool(bets, (bet) => bet.horses[0] === result[0] && bet.horses[1] === result[1]) 
     }
 
     return dividendsPerPlace(numOfPlaces, comission, bets, result, mapFunction)[0]
-
 }
 
-export function Win (bets, result) {
+export function Win (bets, result, comission = 0.15) {
     const numOfPlaces = 1
-    const comission = 0.15
 
     function mapFunction (horse) {
-        return calculateBetsGrossPool(bets, (bet) => bet.horse === horse)
+        return calculateBetsGrossPool(bets, (bet) => bet.horses[0] === horse)
     }
 
     return dividendsPerPlace(numOfPlaces, comission, bets, result, mapFunction)[0]
 }
 
-export function Place (bets, result) {
+export function Place (bets, result, comission = 0.12) {
     const numOfPlaces = 3
-    const comission = 0.12
-
 
     function mapFunction (horse) {
-        return calculateBetsGrossPool(bets, (bet) => bet.horse === horse)
+        return calculateBetsGrossPool(bets, (bet) => bet.horses[0] === horse)
     }
 
     return dividendsPerPlace(numOfPlaces, comission, bets, result, mapFunction)
@@ -54,11 +51,11 @@ function calculateBetsGrossPool (bets, filterFunction) {
 }
 
 function dividendsPerPlace (numOfPlaces, comission, bets, result, mapFunction) {
-    if (bets.length === 0)
+    if (!bets || !bets.length || !result || !result.length)
         return ['0.00', '0.00', '0.00']
 
     const netBets = bets.map((bet) => ({
-        horse: bet.horse,
+        ...bet,
         amount: bet.amount * (1 - comission),
     }))
     const netPool = netBets.reduce(sumBets, 0)
