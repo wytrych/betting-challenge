@@ -36,8 +36,8 @@ class App extends Component {
                 <div className='row dividend-block col-md-12'>
                     <Calculator type='W' bets={this.state.bets} result={this.state.result}>Win</Calculator>
                     <Calculator type='P' bets={this.state.bets} result={this.state.result} showKey={true}>Place</Calculator>
-                    <Calculator type='Q' bets={this.state.bets} result={this.state.result}>Quinella</Calculator>
                     <Calculator type='E' bets={this.state.bets} result={this.state.result}>Exact</Calculator>
+                    <Calculator type='Q' bets={this.state.bets} result={this.state.result}>Quinella</Calculator>
                     <div className={'result-overlay ' + (this.state.result ? 'not-shown' : '')}>
                         <h2>No result provided</h2>
                     </div>
