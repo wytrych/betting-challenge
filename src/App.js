@@ -23,18 +23,14 @@ class App extends Component {
     }
 
     updateBets (bets) {
-        this.setState({
-            bets,
-        })
+        this.setState({bets })
     }
 
     updateResult (result) {
-        this.setState({
-            result,
-        })
+        this.setState({result })
     }
 
-    render() {
+    render () {
         return (
             <div>
                 <div className='row dividend-block col-md-12'>

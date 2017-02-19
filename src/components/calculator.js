@@ -6,18 +6,14 @@ import { calculateDividends } from '../calculators/calculator-dispatcher'
 export class Calculator extends Component {
     constructor (props) {
         super(props)
-        this.state = {
-            comission: DEFAULT_COMISSIONS[props.type] * 100,
-        }
+        this.state = {comission: DEFAULT_COMISSIONS[props.type] * 100 }
 
         this.counter = this.counter.bind(this)
         this.updateComission = this.updateComission.bind(this)
     }
 
     updateComission (e) {
-        this.setState({
-            comission: limit(e.target.value, 0, 100)
-        })
+        this.setState({comission: limit(e.target.value, 0, 100)})
     }
 
     currencySign (dividend) {

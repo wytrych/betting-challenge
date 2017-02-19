@@ -31,7 +31,7 @@ export function parseBet (bet) {
     return {
         type: match[1],
         amount: parseInt(match[3], 10),
-        horses, 
+        horses,
     }
 }
 
@@ -66,12 +66,12 @@ export function parseBetsList (bets) {
                 errors.push(e.message)
                 erroredLines.push(i)
             }
-    })
+        })
 
     if (errors.length) {
         const errorMessage = 'Errors were found:\n' + errors.join('\n')
         throw new BetsListError(errorMessage, erroredLines)
     }
-    
+
     return betsBuckets
 }

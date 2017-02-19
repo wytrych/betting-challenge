@@ -1,15 +1,17 @@
+/* eslint-env jest */
+
 import { calculateDividends } from './calculator-dispatcher'
-import { Win, Place, Quinella, Exact } from './calculators'
+import { win, place, quinella, exact } from './calculators'
 
 jest.mock('./calculators', () => ({
-    Win: jest.fn(),
-    Place: jest.fn(),
-    Quinella: jest.fn(),
-    Exact: jest.fn(),
+    win: jest.fn(),
+    place: jest.fn(),
+    quinella: jest.fn(),
+    exact: jest.fn(),
 }))
 
 describe('calculator dispatcher', () => {
-    
+
     it('should error if type is not valid', () => {
         expect(() => {
             calculateDividends('D')
@@ -25,21 +27,21 @@ describe('calculator dispatcher', () => {
         }
         const result = []
 
-        expect(Win).not.toHaveBeenCalled()
+        expect(win).not.toHaveBeenCalled()
         calculateDividends('W', bets, result)
-        expect(Win).toHaveBeenCalledWith(bets.W, result, 0.1)
+        expect(win).toHaveBeenCalledWith(bets.W, result, 0.1)
 
-        expect(Place).not.toHaveBeenCalled()
+        expect(place).not.toHaveBeenCalled()
         calculateDividends('P', bets, result)
-        expect(Place).toHaveBeenCalledWith(bets.P, result, 0.1)
+        expect(place).toHaveBeenCalledWith(bets.P, result, 0.1)
 
-        expect(Quinella).not.toHaveBeenCalled()
+        expect(quinella).not.toHaveBeenCalled()
         calculateDividends('Q', bets, result)
-        expect(Quinella).toHaveBeenCalledWith(bets.Q, result, 0.1)
+        expect(quinella).toHaveBeenCalledWith(bets.Q, result, 0.1)
 
-        expect(Exact).not.toHaveBeenCalled()
+        expect(exact).not.toHaveBeenCalled()
         calculateDividends('E', bets, result)
-        expect(Exact).toHaveBeenCalledWith(bets.E, result, 0.1)
+        expect(exact).toHaveBeenCalledWith(bets.E, result, 0.1)
     })
 
 })

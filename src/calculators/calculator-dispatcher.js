@@ -1,11 +1,11 @@
-import { Win, Place, Quinella, Exact } from './calculators'
+import { win, place, quinella, exact } from './calculators'
 
 export function calculateDividends (type, bets, result, comission = 0.10) {
     const calculators = {
-        'W': Win,
-        'P': Place,
-        'Q': Quinella,
-        'E': Exact,
+        W: win,
+        P: place,
+        Q: quinella,
+        E: exact,
     }
 
     if (!Object.keys(calculators).includes(type))

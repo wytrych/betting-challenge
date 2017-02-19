@@ -15,9 +15,7 @@ export class ResultInput extends Component {
     }
 
     updateResult (e) {
-        this.setState({
-            result: e.target.value,
-        })
+        this.setState({result: e.target.value })
     }
 
     addResult (e) {

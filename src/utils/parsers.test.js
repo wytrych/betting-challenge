@@ -1,4 +1,6 @@
-import { calculateDividends, parseBet, parseBetsList, parseResult } from './parsers'
+/* eslint-env jest */
+
+import { parseBet, parseBetsList, parseResult } from './parsers'
 
 describe('parseBet', () => {
 
@@ -31,54 +33,54 @@ describe('parseBet', () => {
     })
 
     it('should error when the bet is malformed', () => {
-        
+
         expect(() => {
             parseBet('W:2,1:2')
         }).toThrow('Malformed bet: W:2,1:2')
-        
+
         expect(() => {
             parseBet('Z:1:2')
         }).toThrow('Malformed bet: Z:1:2')
-        
+
         expect(() => {
             parseBet('foo')
         }).toThrow('Malformed bet: foo')
-        
+
         expect(() => {
             parseBet('XX W:1:2')
         }).toThrow('Malformed bet: XX W:1:2')
-        
+
         expect(() => {
             parseBet('W:1:2 XX')
         }).toThrow('Malformed bet: W:1:2 XX')
-        
+
         expect(() => {
             parseBet('XX Q:1,2:2')
         }).toThrow('Malformed bet: XX Q:1,2:2')
-        
+
         expect(() => {
             parseBet('Q:1,2:2 XX')
         }).toThrow('Malformed bet: Q:1,2:2 XX')
-        
+
     })
 
     it('should error when Quinella or Exact have the same numbers', () => {
-        
+
         expect(() => {
             parseBet('Q:1,1:2')
         }).toThrow('Horse numbers must be different: Q:1,1:2')
-        
+
         expect(() => {
             parseBet('E:1,1:2')
         }).toThrow('Horse numbers must be different: E:1,1:2')
-        
+
     })
-    
-    
+
+
 })
 
 describe('parseBetsList', () => {
-    
+
     it('should parse the list and create separate bet lists for each product', () => {
         const bets = [
             'W:1:2',
@@ -112,7 +114,7 @@ describe('parseBetsList', () => {
         expect(() => {
             parseBetsList(bets)
         }).toThrow(errorMessage)
-        
+
     })
 
     it('should ignore empty entries', () => {
@@ -131,7 +133,7 @@ describe('parseBetsList', () => {
 
         expect(parseBetsList(bets)).toEqual(expectedResult)
     })
-    
+
     it('should return lineNumbers property on the Error object', () => {
         const bets = [
             'W:1:4',
@@ -145,11 +147,11 @@ describe('parseBetsList', () => {
             expect(e.erroredLines).toEqual([1, 2])
         }
     })
-    
+
 })
 
 describe('parseResult', () => {
-    
+
     it('should process a correct result', () => {
         expect(parseResult('R:1:2:3')).toEqual([1, 2, 3])
     })
@@ -159,35 +161,35 @@ describe('parseResult', () => {
         expect(() => {
             parseResult('R:1:3')
         }).toThrow('Malformed result')
-        
+
         expect(() => {
             parseResult('R:1:3:2sdsd')
         }).toThrow('Malformed result')
-        
+
         expect(() => {
             parseResult('asdsaR:1:3:2')
         }).toThrow('Malformed result')
-        
+
         expect(() => {
             parseResult('R:a:3:1')
         }).toThrow('Malformed result')
-        
+
         expect(() => {
             parseResult('foo')
         }).toThrow('Malformed result')
-        
+
     })
-    
+
     it('should error when the horse numbers are not different', () => {
 
         expect(() => {
             parseResult('R:1:1:1')
         }).toThrow('Horse numbers must be different')
-        
+
         expect(() => {
             parseResult('R:1:2:1')
         }).toThrow('Horse numbers must be different')
-        
+
     })
-    
+
 })

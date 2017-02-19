@@ -1,0 +1,119 @@
+exports[`Calculator should render 1`] = `
+<div
+  className="dividend col-md-3 col-xs-6">
+  <h3 />
+  <div
+    className="well">
+    <div>
+      <h4>
+        <strong>
+          
+          
+           
+        </strong>
+      </h4>
+    </div>
+    <div>
+      <h4>
+        <strong>
+          
+          
+          No winning bets
+        </strong>
+      </h4>
+    </div>
+    <div>
+      <h4>
+        <strong>
+          
+          
+           
+        </strong>
+      </h4>
+    </div>
+  </div>
+  <div
+    className="form-group">
+    <label>
+      Comission rate (%):
+      <input
+        max="100"
+        min="0"
+        onChange={[Function]}
+        type="range"
+        value={15} />
+      <input
+        className="form-control"
+        max="100"
+        min="0"
+        onChange={[Function]}
+        type="number"
+        value={15} />
+    </label>
+  </div>
+</div>
+`;
+
+exports[`ResultInput should render 1`] = `
+<form
+  className="form-inline "
+  onSubmit={[Function]}>
+  <div
+    className="form-group">
+    <label
+      className="control-label"
+      htmlFor="result">
+      Result:
+    </label>
+    <input
+      className="form-control"
+      id="result"
+      onChange={[Function]}
+      type="text"
+      value="" />
+  </div>
+  <button
+    className="btn btn-info"
+    disabled={true}>
+    Update result
+  </button>
+  <div
+    className="help-block">
+    
+    
+  </div>
+</form>
+`;
+
+exports[`bets-input should render 1`] = `
+<form
+  className=""
+  onSubmit={[Function]}>
+  <div
+    className="form-group">
+    <label
+      className="control-label"
+      htmlFor="bets">
+      Bets
+    </label>
+    <textarea
+      className="form-control"
+      id="bets"
+      onChange={[Function]}
+      rows="10"
+      value="" />
+  </div>
+  <button
+    className="btn btn-primary"
+    disabled={true}>
+    Submit bets
+  </button>
+  <div
+    className="help-block">
+    <div>
+      
+    </div>
+    
+  </div>
+</form>
+`;
