@@ -43,6 +43,12 @@ input[type="range"] {
 
 @media (min-width: 768px) {
 
+    /*
+     * For some reason the input box is touching the button without this.
+     * I am not sure what is the difference between the example: http://getbootstrap.com/css/#forms-inline
+     * As far as I can tell all the classes and the structure are correct and also when inspecting
+     * I don't see any paddings on margins on the inputs and buttons, but they are still a little bit apart from each other.
+     */
     #result {
         margin-left: 10px;
         margin-right: 10px;
