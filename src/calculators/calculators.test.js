@@ -128,7 +128,7 @@ describe('calculators', () => {
                     horses: [3],
                 },
                 {
-                    amount: 4,
+                    amount: 5,
                     horses: [4],
                 },
                 {
@@ -167,7 +167,7 @@ describe('calculators', () => {
 
             const results = [2, 3, 1]
 
-            expect(win(bets, results)).toEqual(['2.60'])
+            expect(win(bets, results)).toEqual(['2.61'])
         })
     })
 
